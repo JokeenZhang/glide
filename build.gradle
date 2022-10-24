@@ -1,6 +1,10 @@
 buildscript {
     repositories {
-        jcenter()
+        google()
+        mavenCentral()
+        maven { url("https://maven.aliyun.com/repository/google") }
+        maven { url("https://maven.aliyun.com/repository/public") }
+        maven { url("https://maven.aliyun.com/repository/jcenter") }
     }
 
     dependencies {
@@ -10,42 +14,58 @@ buildscript {
     }
 }
 
-subprojects { project ->
+allprojects {
     repositories {
-        jcenter()
-    }
-
-    apply plugin: 'checkstyle'
-
-    checkstyle {
-        configFile = new File(rootDir, 'checkstyle.xml')
-        configProperties.checkStyleConfigDir = rootProject.rootDir
-    }
-
-    task checkstyle(type: Checkstyle) {
-        source 'src'
-        include '**/*.java'
-        exclude '**/gen/**'
-
-        // empty classpath
-        classpath = files()
-    }
-
-    afterEvaluate {
-        if (project.tasks.findByName('check')) {
-            check.dependsOn('checkstyle')
-        }
-    }
-
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            if (!name.contains('Test')) {
-                options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
-            }
-        }
+        google()
+        mavenCentral()
+        maven { url("https://maven.aliyun.com/repository/google") }
+        maven { url("https://maven.aliyun.com/repository/public") }
+        maven { url("https://maven.aliyun.com/repository/jcenter") }
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.2'
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
+
+//subprojects { project ->
+//    repositories {
+//        maven { url("https://maven.aliyun.com/repository/google") }
+//        maven { url("https://maven.aliyun.com/repository/public") }
+//        maven { url("https://maven.aliyun.com/repository/jcenter") }
+//    }
+//
+//    apply plugin: 'checkstyle'
+//
+//    checkstyle {
+//        configFile = new File(rootDir, 'checkstyle.xml')
+//        configProperties.checkStyleConfigDir = rootProject.rootDir
+//    }
+//
+//    task checkstyle(type: Checkstyle) {
+//        source 'src'
+//        include '**/*.java'
+//        exclude '**/gen/**'
+//
+//        // empty classpath
+//        classpath = files()
+//    }
+//
+//    afterEvaluate {
+//        if (project.tasks.findByName('check')) {
+//            check.dependsOn('checkstyle')
+//        }
+//    }
+//
+//    gradle.projectsEvaluated {
+//        tasks.withType(JavaCompile) {
+//            if (!name.contains('Test')) {
+//                options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+//            }
+//        }
+//    }
+//}
+//
+//task wrapper(type: Wrapper) {
+//    gradleVersion = '2.2'
+//}

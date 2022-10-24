@@ -1,4 +1,5 @@
 .gradle
+.idea
 build
 *.iws
 doc/**
@@ -9,13 +10,6 @@ library/.gradle
 library/.settings
 library/target
 library/install_dependencies/maven-android-sdk-deployer
-.idea/libraries
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/dictionaries
-.idea/dataSources.ids
-.idea/datasources.xml
 library/.idea
 samples/**/.idea
 *.DS_Store
