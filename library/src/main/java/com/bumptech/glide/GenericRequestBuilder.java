@@ -639,6 +639,9 @@ public class GenericRequestBuilder<ModelType, DataType, ResourceType, TranscodeT
      * @return The given target.
      */
     public <Y extends Target<TranscodeType>> Y into(Y target) {
+        //GlideDrawableImageViewTarget extends ImageViewTarget<GlideDrawable>
+        //这种情况下Y是GlideDrawableImageViewTarget，TranscodeType是GlideDrawable
+
         Util.assertMainThread();
         if (target == null) {
             throw new IllegalArgumentException("You must pass in a non null Target");
@@ -694,6 +697,9 @@ public class GenericRequestBuilder<ModelType, DataType, ResourceType, TranscodeT
             }
         }
 
+        //buildImageViewTarget()在未调用asBitmap情况下返回GlideDrawableImageViewTarget
+        //执行into(GlideDrawableImageViewTarget)
+        //GlideDrawableImageViewTarget extends ImageViewTarget<GlideDrawable>
         return into(glide.buildImageViewTarget(view, transcodeClass));
     }
 
@@ -784,6 +790,7 @@ public class GenericRequestBuilder<ModelType, DataType, ResourceType, TranscodeT
     }
 
     private Request buildRequest(Target<TranscodeType> target) {
+        //获取String url情况下，target是GlideDrawableImageViewTarget类型，TranscodeType是GlideDrawable
         if (priority == null) {
             priority = Priority.NORMAL;
         }
@@ -791,6 +798,8 @@ public class GenericRequestBuilder<ModelType, DataType, ResourceType, TranscodeT
     }
 
     private Request buildRequestRecursive(Target<TranscodeType> target, ThumbnailRequestCoordinator parentCoordinator) {
+        //获取String url情况下，target是GlideDrawableImageViewTarget类型，TranscodeType是GlideDrawable
+
         if (thumbnailRequestBuilder != null) {
             if (isThumbnailBuilt) {
                 throw new IllegalStateException("You cannot use a request as both the main request and a thumbnail, "
@@ -829,12 +838,14 @@ public class GenericRequestBuilder<ModelType, DataType, ResourceType, TranscodeT
             return coordinator;
         } else {
             // Base case: no thumbnail.
+            //不去处理缩略图的情况下
             return obtainRequest(target, sizeMultiplier, priority, parentCoordinator);
         }
     }
 
     private Request obtainRequest(Target<TranscodeType> target, float sizeMultiplier, Priority priority,
             RequestCoordinator requestCoordinator) {
+        //获取String url情况下，target是GlideDrawableImageViewTarget类型，TranscodeType是GlideDrawable
         return GenericRequest.obtain(
                 loadProvider,
                 model,

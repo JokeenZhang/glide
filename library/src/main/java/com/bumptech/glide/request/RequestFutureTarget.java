@@ -94,9 +94,17 @@ public class RequestFutureTarget<T, R> implements FutureTarget<R>, Runnable {
         return isCancelled || resultReceived;
     }
 
+    /**
+     * 交给外部手动调用获取结果
+     *
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
     @Override
     public R get() throws InterruptedException, ExecutionException {
         try {
+            //实际上还是通过doGet()方法来完成后续逻辑
             return doGet(null);
         } catch (TimeoutException e) {
             throw new AssertionError(e);
@@ -165,19 +173,26 @@ public class RequestFutureTarget<T, R> implements FutureTarget<R>, Runnable {
     }
 
     private synchronized R doGet(Long timeoutMillis) throws ExecutionException, InterruptedException, TimeoutException {
+        //判断是否在子线程，如果不是抛出异常
         if (assertBackgroundThread) {
             Util.assertBackgroundThread();
         }
+
+        //判断下载是否已取消、或者已失败，如果是已取消或者已失败的话都会直接抛出一个异常
 
         if (isCancelled) {
             throw new CancellationException();
         } else if (exceptionReceived) {
             throw new ExecutionException(exception);
         } else if (resultReceived) {
+            //根据resultReceived这个变量来判断下载是否完成，如果为true就直接返回结果
             return resource;
         }
 
+        //这里是下载未完成的情况
+
         if (timeoutMillis == null) {
+            //waitForTimeout()内会调用wait()阻塞线程，阻止代码继续执行。接下来等待onResourceReady()被回调，下载完成，然后notify恢复执行
             waiter.waitForTimeout(this, 0);
         } else if (timeoutMillis > 0) {
             waiter.waitForTimeout(this, timeoutMillis);

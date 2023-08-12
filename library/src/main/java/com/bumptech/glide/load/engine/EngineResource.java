@@ -97,6 +97,7 @@ class EngineResource<Z> implements Resource<Z> {
             throw new IllegalThreadStateException("Must call release on the main thread");
         }
         if (--acquired == 0) {
+            //这里listener是Engine对象
             listener.onResourceReleased(key, this);
         }
     }

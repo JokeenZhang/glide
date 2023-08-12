@@ -1,5 +1,6 @@
 package com.bumptech.glide.manager;
 
+import com.bumptech.glide.request.GenericRequest;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.util.Util;
 
@@ -34,7 +35,10 @@ public class RequestTracker {
     public void runRequest(Request request) {
         requests.add(request);
         if (!isPaused) {
+            //实际上是GenericRequest
             request.begin();
+//            GenericRequest nRequest = (GenericRequest) request;
+//            nRequest.begin();
         } else {
             pendingRequests.add(request);
         }

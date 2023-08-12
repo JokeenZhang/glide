@@ -96,8 +96,10 @@ class EngineRunnable implements Runnable, Prioritized {
 
     private Resource<?> decode() throws Exception {
         if (isDecodingFromCache()) {
+            //如果有硬盘缓存就从中取出
             return decodeFromCache();
         } else {
+            //通过图片url去加载图片
             return decodeFromSource();
         }
     }
@@ -105,6 +107,7 @@ class EngineRunnable implements Runnable, Prioritized {
     private Resource<?> decodeFromCache() throws Exception {
         Resource<?> result = null;
         try {
+            //获取硬盘缓存中DiskCacheStrategy.RESULT策略下的转换过后的图片
             result = decodeJob.decodeResultFromCache();
         } catch (Exception e) {
             if (Log.isLoggable(TAG, Log.DEBUG)) {
@@ -113,6 +116,7 @@ class EngineRunnable implements Runnable, Prioritized {
         }
 
         if (result == null) {
+            //获取硬盘缓存中DiskCacheStrategy.SOURCE策略下的未转换的原图
             result = decodeJob.decodeSourceFromCache();
         }
         return result;

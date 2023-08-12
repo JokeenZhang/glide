@@ -34,6 +34,8 @@ public class Engine implements EngineJobListener,
     private final EngineKeyFactory keyFactory;
     private final MemoryCache cache;
     private final EngineJobFactory engineJobFactory;
+
+    /**弱引用的HashMap，用来缓存正在使用的图片*/
     private final Map<Key, WeakReference<EngineResource<?>>> activeResources;
     private final ResourceRecycler resourceRecycler;
     private final LazyDiskCacheProvider diskCacheProvider;
@@ -222,6 +224,7 @@ public class Engine implements EngineJobListener,
         EngineResource<?> cached = getEngineResourceFromCache(key);
         if (cached != null) {
             cached.acquire();
+            //从缓存中删除后加入到activeResources，用来缓存正在使用的图片
             activeResources.put(key, new ResourceWeakReference(key, cached, getReferenceQueue()));
         }
         return cached;
@@ -229,6 +232,7 @@ public class Engine implements EngineJobListener,
 
     @SuppressWarnings("unchecked")
     private EngineResource<?> getEngineResourceFromCache(Key key) {
+        //取到缓存图片后将其从缓存中删除
         Resource<?> cached = cache.remove(key);
 
         final EngineResource result;

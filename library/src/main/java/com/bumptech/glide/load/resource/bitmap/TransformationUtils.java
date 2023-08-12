@@ -36,11 +36,15 @@ public final class TransformationUtils {
      * @return The resized Bitmap (will be recycled if recycled is not null).
      */
     public static Bitmap centerCrop(Bitmap recycled, Bitmap toCrop, int width, int height) {
+        //如果原图为空，或者原图的尺寸和目标裁剪尺寸相同，那么就放弃裁剪
         if (toCrop == null) {
             return null;
         } else if (toCrop.getWidth() == width && toCrop.getHeight() == height) {
             return toCrop;
         }
+
+        //通过数学计算来算出画布的缩放的比例以及偏移值
+
         // From ImageView/Bitmap.createScaledBitmap.
         final float scale;
         float dx = 0, dy = 0;
@@ -55,6 +59,8 @@ public final class TransformationUtils {
 
         m.setScale(scale, scale);
         m.postTranslate((int) (dx + 0.5f), (int) (dy + 0.5f));
+
+        //判断缓存池中取出的 Bitmap 对象recycled是否为空，如果不为空就可以直接使用，如果为空则要创建一个新的 Bitmap 对象
         final Bitmap result;
         if (recycled != null) {
             result = recycled;
@@ -62,9 +68,11 @@ public final class TransformationUtils {
             result = Bitmap.createBitmap(width, height, getSafeConfig(toCrop));
         }
 
+        //将原图 Bitmap 对象的 alpha 值复制到裁剪 Bitmap 对象上面
         // We don't add or remove alpha, so keep the alpha setting of the Bitmap we were given.
         TransformationUtils.setAlpha(toCrop, result);
 
+        //裁剪Bitmap对象进行绘制
         Canvas canvas = new Canvas(result);
         Paint paint = new Paint(PAINT_FLAGS);
         canvas.drawBitmap(toCrop, m, paint);

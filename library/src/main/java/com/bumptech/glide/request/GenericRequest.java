@@ -434,6 +434,7 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
         width = Math.round(sizeMultiplier * width);
         height = Math.round(sizeMultiplier * height);
 
+        //loadProvider是FixedLoadProvider，在DrawableTypeRequest构造方法中创建
         ModelLoader<A, T> modelLoader = loadProvider.getModelLoader();
         final DataFetcher<T> dataFetcher = modelLoader.getResourceFetcher(model, width, height);
 

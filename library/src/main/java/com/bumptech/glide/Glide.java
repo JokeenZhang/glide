@@ -293,6 +293,13 @@ public class Glide {
         return dataLoadProviderRegistry.get(dataClass, decodedClass);
     }
 
+    /**
+     * 未调用asBitmap情况下返回GlideDrawableImageViewTarget
+     * @param imageView
+     * @param transcodedClass
+     * @return
+     * @param <R>
+     */
     <R> Target<R> buildImageViewTarget(ImageView imageView, Class<R> transcodedClass) {
         return imageViewTargetFactory.buildTarget(imageView, transcodedClass);
     }

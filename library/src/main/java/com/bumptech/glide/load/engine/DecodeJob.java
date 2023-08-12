@@ -71,6 +71,8 @@ class DecodeJob<A, T, Z> {
     }
 
     /**
+     * 获取硬盘缓存中DiskCacheStrategy.RESULT策略下的转换过后的图片
+     *
      * Returns a transcoded resource decoded from transformed resource data in the disk cache, or null if no such
      * resource exists.
      *
@@ -95,6 +97,8 @@ class DecodeJob<A, T, Z> {
     }
 
     /**
+     * 获取硬盘缓存中DiskCacheStrategy.SOURCE策略下的未转换的原图
+     *
      * Returns a transformed and transcoded resource decoded from source data in the disk cache, or null if no such
      * resource exists.
      *
@@ -117,15 +121,20 @@ class DecodeJob<A, T, Z> {
      * Returns a transformed and transcoded resource decoded from source data, or null if no source data could be
      * obtained or no resource could be decoded.
      *
+     * 返回从源数据解码的转换和转码的资源，如果无法获取源数据或无法解码资源，则返回 null。
      * <p>
      *     Depending on the {@link com.bumptech.glide.load.engine.DiskCacheStrategy} used, source data is either decoded
      *     directly or first written to the disk cache and then decoded from the disk cache.
+     *
+     *     根据所使用的 DiskCacheStrategy，源数据要幺直接解码，要幺先写入磁盘缓存，然后从磁盘缓存解码。
      * </p>
      *
      * @throws Exception
      */
     public Resource<Z> decodeFromSource() throws Exception {
+        //用来解析原图片
         Resource<T> decoded = decodeSource();
+        //对图片进行转换和转码，并写入到硬盘缓存中
         return transformEncodeAndTranscode(decoded);
     }
 
@@ -134,13 +143,20 @@ class DecodeJob<A, T, Z> {
         fetcher.cancel();
     }
 
+    /**
+     * 对图片进行转换和转码，并写入到硬盘缓存中
+     * @param decoded
+     * @return
+     */
     private Resource<Z> transformEncodeAndTranscode(Resource<T> decoded) {
         long startTime = LogTime.getLogTime();
+        //对图片进行转换
         Resource<T> transformed = transform(decoded);
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             logWithTimeAndKey("Transformed resource from source", startTime);
         }
 
+        //将转换后的图片写入到缓存中
         writeTransformedToCache(transformed);
 
         startTime = LogTime.getLogTime();
@@ -151,18 +167,28 @@ class DecodeJob<A, T, Z> {
         return result;
     }
 
+    /**
+     * 将转换后的图片写入到硬盘缓存中
+     * @param transformed 转换后的图片，非原图
+     */
     private void writeTransformedToCache(Resource<T> transformed) {
         if (transformed == null || !diskCacheStrategy.cacheResult()) {
             return;
         }
         long startTime = LogTime.getLogTime();
         SourceWriter<Resource<T>> writer = new SourceWriter<Resource<T>>(loadProvider.getEncoder(), transformed);
+        //写入到硬盘缓存，这里用的是resultKey
         diskCacheProvider.getDiskCache().put(resultKey, writer);
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             logWithTimeAndKey("Wrote transformed from source to cache", startTime);
         }
     }
 
+    /**
+     * 用来解析原图片
+     * @return
+     * @throws Exception
+     */
     private Resource<T> decodeSource() throws Exception {
         Resource<T> decoded = null;
         try {
@@ -183,7 +209,9 @@ class DecodeJob<A, T, Z> {
 
     private Resource<T> decodeFromSourceData(A data) throws IOException {
         final Resource<T> decoded;
+        //是否允许缓存原始图片？
         if (diskCacheStrategy.cacheSource()) {
+            //允许缓存原始图片
             decoded = cacheAndDecodeSourceData(data);
         } else {
             long startTime = LogTime.getLogTime();
@@ -195,9 +223,16 @@ class DecodeJob<A, T, Z> {
         return decoded;
     }
 
+    /**
+     * 缓存和转码原始图片
+     * @param data
+     * @return
+     * @throws IOException
+     */
     private Resource<T> cacheAndDecodeSourceData(A data) throws IOException {
         long startTime = LogTime.getLogTime();
         SourceWriter<A> writer = new SourceWriter<A>(loadProvider.getSourceEncoder(), data);
+        //获取DiskLruCache实例并调用put写入硬盘缓存，注意这里用到的key
         diskCacheProvider.getDiskCache().put(resultKey.getOriginalKey(), writer);
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             logWithTimeAndKey("Wrote source to cache", startTime);
@@ -228,6 +263,11 @@ class DecodeJob<A, T, Z> {
         return result;
     }
 
+    /**
+     * 转换图片
+     * @param decoded
+     * @return
+     */
     private Resource<T> transform(Resource<T> decoded) {
         if (decoded == null) {
             return null;

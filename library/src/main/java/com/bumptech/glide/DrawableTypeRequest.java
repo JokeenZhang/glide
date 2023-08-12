@@ -42,8 +42,10 @@ public class DrawableTypeRequest<ModelType> extends DrawableRequestBuilder<Model
         }
 
         if (transcoder == null) {
+            //创建ResourceTranscoder，用于对图片进行转码，但是ResourceTranscoder是个接口，会创建GifBitmapWrapperDrawableTranscoder对象
             transcoder = glide.buildTranscoder(resourceClass, transcodedClass);
         }
+        //DataLoadProvider，是用于对图片进行编解码的，由于DataLoadProvider是一个接口，这里实际会构建出一个ImageVideoGifDrawableLoadProvider对象。
         DataLoadProvider<ImageVideoWrapper, Z> dataLoadProvider = glide.buildDataProvider(ImageVideoWrapper.class,
                 resourceClass);
         ImageVideoModelLoader<A> modelLoader = new ImageVideoModelLoader<A>(streamModelLoader,

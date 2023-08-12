@@ -12,6 +12,13 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
  */
 public class ImageViewTargetFactory {
 
+    /**
+     * 未调用asBitmap情况下一般返回GlideDrawableImageViewTarget
+     * @param view
+     * @param clazz
+     * @return
+     * @param <Z>
+     */
     @SuppressWarnings("unchecked")
     public <Z> Target<Z> buildTarget(ImageView view, Class<Z> clazz) {
         if (GlideDrawable.class.isAssignableFrom(clazz)) {
