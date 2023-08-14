@@ -132,9 +132,10 @@ class DecodeJob<A, T, Z> {
      * @throws Exception
      */
     public Resource<Z> decodeFromSource() throws Exception {
-        //用来解析原图片
+        //用来解析原图片，decoded是Resource<GifBitmapWrapper>对象
         Resource<T> decoded = decodeSource();
         //对图片进行转换和转码，并写入到硬盘缓存中
+        //返回类型是Resource<GlideDrawable>
         return transformEncodeAndTranscode(decoded);
     }
 
@@ -145,12 +146,14 @@ class DecodeJob<A, T, Z> {
 
     /**
      * 对图片进行转换和转码，并写入到硬盘缓存中
-     * @param decoded
-     * @return
+     * @param decoded 为Resource<GifBitmapWrapper>，T类型为GifBitmapWrapper
+     * @return 返回Resource<GlideDrawable>
      */
     private Resource<Z> transformEncodeAndTranscode(Resource<T> decoded) {
         long startTime = LogTime.getLogTime();
         //对图片进行转换
+        // 这里返回值类型针对静态图片。在这里完成从Resource<GlideDrawable>到Resource<GlideBitmapDrawable>的转换
+        //即transformed是Resource<GlideBitmapDrawable>
         Resource<T> transformed = transform(decoded);
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             logWithTimeAndKey("Transformed resource from source", startTime);
@@ -160,6 +163,7 @@ class DecodeJob<A, T, Z> {
         writeTransformedToCache(transformed);
 
         startTime = LogTime.getLogTime();
+        //transformed是Resource<GlideBitmapDrawable>，经过transcode()处理后返回Resource<GlideDrawable>
         Resource<Z> result = transcode(transformed);
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             logWithTimeAndKey("Transcoded transformed from source", startTime);
@@ -294,9 +298,12 @@ class DecodeJob<A, T, Z> {
     }
 
     private Resource<Z> transcode(Resource<T> transformed) {
+        //transformed是Resource<GlideBitmapDrawable>
         if (transformed == null) {
             return null;
         }
+        //transcoder实际上是 GifBitmapWrapperDrawableTranscoder 对象
+        //方法返回Resource<GlideDrawable>类型，实际是 GlideBitmapDrawableResource 对象
         return transcoder.transcode(transformed);
     }
 

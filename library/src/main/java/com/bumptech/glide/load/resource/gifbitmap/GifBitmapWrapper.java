@@ -8,6 +8,8 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 /**
  * A wrapper that contains either an {@link android.graphics.Bitmap} resource or an
  * {@link com.bumptech.glide.load.resource.gif.GifDrawable} resource.
+ *
+ * 既能封装Gif，又能封装静态图Bitmap，能应对很多类型的图片
  */
 public class GifBitmapWrapper {
     private final Resource<GifDrawable> gifResource;
