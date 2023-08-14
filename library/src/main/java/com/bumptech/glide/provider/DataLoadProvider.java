@@ -10,6 +10,8 @@ import java.io.File;
  * A load provider that provides the necessary encoders and decoders to decode a specific type of resource from a
  * specific type of data.
  *
+ * 用于对图片进行编解码
+ *
  * @param <T> The type of data the resource will be decoded from.
  * @param <Z> The type of resource that will be decoded.
  */

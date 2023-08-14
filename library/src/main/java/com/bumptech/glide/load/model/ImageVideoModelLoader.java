@@ -67,6 +67,7 @@ public class ImageVideoModelLoader<A> implements ModelLoader<A, ImageVideoWrappe
             InputStream is = null;
             if (streamFetcher != null) {
                 try {
+                    //streamFetcher是创建ImageVideoFetcher时传入的HttpUrlFetcher
                     is = streamFetcher.loadData(priority);
                 } catch (Exception e) {
                     if (Log.isLoggable(TAG, Log.VERBOSE)) {

@@ -434,14 +434,19 @@ public final class GenericRequest<A, T, Z, R> implements Request, SizeReadyCallb
         width = Math.round(sizeMultiplier * width);
         height = Math.round(sizeMultiplier * height);
 
-        //loadProvider是FixedLoadProvider，在DrawableTypeRequest构造方法中创建
+        /**
+        {@link #loadProvider}是在load()时创建的{@link com.bumptech.glide.DrawableTypeRequest}调用其构造函数时创建出的{@link com.bumptech.glide.provider.FixedLoadProvider}对象
+         */
+        //这里得到的modelLoader是 ImageVideoModelLoader
         ModelLoader<A, T> modelLoader = loadProvider.getModelLoader();
+        //会返回ImageVideoFetcher对象
         final DataFetcher<T> dataFetcher = modelLoader.getResourceFetcher(model, width, height);
 
         if (dataFetcher == null) {
             onException(new Exception("Failed to load model: \'" + model + "\'"));
             return;
         }
+        //这里得到的transcoder是GifBitmapWrapperDrawableTranscoder
         ResourceTranscoder<Z, R> transcoder = loadProvider.getTranscoder();
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             logV("finished setup for calling load in " + LogTime.getElapsedMillis(startTime));

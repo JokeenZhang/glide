@@ -5,6 +5,7 @@ import com.bumptech.glide.load.engine.Resource;
 /**
  * Transcodes a resource of one type to a resource of another type.
  *
+ * 对图片进行转码
  * @param <Z> The type of the resource that will be transcoded from.
  * @param <R> The type of the resource that will be transcoded to.
  */

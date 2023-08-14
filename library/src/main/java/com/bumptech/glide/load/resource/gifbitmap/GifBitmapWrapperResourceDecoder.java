@@ -68,6 +68,7 @@ public class GifBitmapWrapperResourceDecoder implements ResourceDecoder<ImageVid
     private GifBitmapWrapper decode(ImageVideoWrapper source, int width, int height, byte[] bytes) throws IOException {
         final GifBitmapWrapper result;
         if (source.getStream() != null) {
+            //从服务器返回的流当中读取数据
             result = decodeStream(source, width, height, bytes);
         } else {
             result = decodeBitmapWrapper(source, width, height);
@@ -75,21 +76,39 @@ public class GifBitmapWrapperResourceDecoder implements ResourceDecoder<ImageVid
         return result;
     }
 
+    /**
+     * 从服务器返回的流当中读取数据
+     *
+     * decodeStream()方法中会先从流中读取2个字节的数据，来判断这张图是GIF图还是普通的静图，如果是GIF图就调用
+     * decodeGifWrapper()方法来进行解码，如果是普通的静图就用调用decodeBitmapWrapper()方法来进行解码
+     *
+     * @param source
+     * @param width
+     * @param height
+     * @param bytes
+     * @return
+     * @throws IOException
+     */
     private GifBitmapWrapper decodeStream(ImageVideoWrapper source, int width, int height, byte[] bytes)
             throws IOException {
         InputStream bis = streamFactory.build(source.getStream(), bytes);
         bis.mark(MARK_LIMIT_BYTES);
+        //从数据流中读取两个字节的数据来判断类型
         ImageHeaderParser.ImageType type = parser.parse(bis);
         bis.reset();
 
         GifBitmapWrapper result = null;
         if (type == ImageHeaderParser.ImageType.GIF) {
+            //如果是Gif图
             result = decodeGifWrapper(bis, width, height);
         }
         // Decoding the gif may fail even if the type matches.
+        // 如果解析gif失败那么就当静态图处理
         if (result == null) {
+            //静态图处理
             // We can only reset the buffered InputStream, so to start from the beginning of the stream, we need to
             // pass in a new source containing the buffered stream rather than the original stream.
+            //翻译：我们只能重置缓冲的 InputStream，因此要从流的开头开始，我们需要传入一个包含缓冲流而不是原始流的新源。
             ImageVideoWrapper forBitmapDecoder = new ImageVideoWrapper(bis, source.getFileDescriptor());
             result = decodeBitmapWrapper(forBitmapDecoder, width, height);
         }
@@ -115,6 +134,14 @@ public class GifBitmapWrapperResourceDecoder implements ResourceDecoder<ImageVid
         return result;
     }
 
+    /**
+     * 静态图片解码
+     * @param toDecode
+     * @param width
+     * @param height
+     * @return
+     * @throws IOException
+     */
     private GifBitmapWrapper decodeBitmapWrapper(ImageVideoWrapper toDecode, int width, int height) throws IOException {
         GifBitmapWrapper result = null;
 

@@ -193,6 +193,8 @@ class DecodeJob<A, T, Z> {
         Resource<T> decoded = null;
         try {
             long startTime = LogTime.getLogTime();
+            //fetcher是在onSizeReady()得到的ImageVideoFetcher对象
+            //loadData()返回的是ImageVideoWrapper ，携带InputStream，此时已经通过网络请求拿到图片数据
             final A data = fetcher.loadData(priority);
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 logWithTimeAndKey("Fetched data", startTime);
@@ -207,6 +209,12 @@ class DecodeJob<A, T, Z> {
         return decoded;
     }
 
+    /**
+     * 这里已经拿到图片，A的类型是{@link com.bumptech.glide.load.model.ImageVideoWrapper}
+     * @param data
+     * @return
+     * @throws IOException
+     */
     private Resource<T> decodeFromSourceData(A data) throws IOException {
         final Resource<T> decoded;
         //是否允许缓存原始图片？
@@ -215,6 +223,8 @@ class DecodeJob<A, T, Z> {
             decoded = cacheAndDecodeSourceData(data);
         } else {
             long startTime = LogTime.getLogTime();
+            //解码操作
+            //这里loadProvider是FixedLoadProvider，getSourceDecoder()得到的则是一个GifBitmapWrapperResourceDecoder对象
             decoded = loadProvider.getSourceDecoder().decode(data, width, height);
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 logWithTimeAndKey("Decoded from source", startTime);
