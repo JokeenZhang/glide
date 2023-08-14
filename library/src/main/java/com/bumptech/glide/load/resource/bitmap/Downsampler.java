@@ -22,6 +22,10 @@ import java.util.Set;
 
 /**
  * A base class with methods for loading and decoding images from InputStreams.
+ *
+ * 翻译：一个基类，其中包含用于从输入流加载和解码图像的方法。
+ *
+ * 对服务器返回的InputStream的读取，以及对图片的加载，包括对图片的压缩，甚至还有旋转、圆角等逻辑处理
  */
 public abstract class Downsampler implements BitmapDecoder<InputStream> {
     private static final String TAG = "Downsampler";

@@ -202,6 +202,7 @@ class DecodeJob<A, T, Z> {
             if (isCancelled) {
                 return null;
             }
+            //ImageVideoWrapper类型参数
             decoded = decodeFromSourceData(data);
         } finally {
             fetcher.cleanup();
@@ -219,12 +220,14 @@ class DecodeJob<A, T, Z> {
         final Resource<T> decoded;
         //是否允许缓存原始图片？
         if (diskCacheStrategy.cacheSource()) {
-            //允许缓存原始图片
+            //允许缓存原始图片，data是ImageVideoWrapper类型
             decoded = cacheAndDecodeSourceData(data);
         } else {
             long startTime = LogTime.getLogTime();
             //解码操作
             //这里loadProvider是FixedLoadProvider，getSourceDecoder()得到的则是一个GifBitmapWrapperResourceDecoder对象
+            //最终调用GifBitmapWrapperResourceDecoder.decode(ImageVideoWrapper source, int width, int height):Resource<GifBitmapWrapper>
+            //因此decoded在这里的类型是Resource<GifBitmapWrapper>
             decoded = loadProvider.getSourceDecoder().decode(data, width, height);
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 logWithTimeAndKey("Decoded from source", startTime);

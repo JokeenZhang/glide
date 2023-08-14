@@ -145,6 +145,7 @@ public class GifBitmapWrapperResourceDecoder implements ResourceDecoder<ImageVid
     private GifBitmapWrapper decodeBitmapWrapper(ImageVideoWrapper toDecode, int width, int height) throws IOException {
         GifBitmapWrapper result = null;
 
+        //这个bitmapDecoder是一个 ImageVideoBitmapDecoder 对象
         Resource<Bitmap> bitmapResource = bitmapDecoder.decode(toDecode, width, height);
         if (bitmapResource != null) {
             result = new GifBitmapWrapper(bitmapResource, null);

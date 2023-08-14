@@ -22,6 +22,8 @@ public class ImageHeaderParser {
 
     /**
      * The format of the image data including whether or not the image may include transparent pixels.
+     *
+     * 翻译：图像数据的格式包括图像是否可以包括透明像素。
      */
     public enum ImageType {
         /** GIF type. */
@@ -30,7 +32,7 @@ public class ImageHeaderParser {
         JPEG(false),
         /** PNG type with alpha. */
         PNG_A(true),
-        /** PNG type without alpha. */
+        /** PNG type without alpha.  即没有透明通道的png图片*/
         PNG(false),
         /** Unrecognized type. */
         UNKNOWN(false);
@@ -331,6 +333,7 @@ public class ImageHeaderParser {
         }
 
         public int getUInt16() throws IOException {
+            //先读取一个字节后计算，然后再读取一个字节后计算，总共读取两个字节
             return  (is.read() << 8 & 0xFF00) | (is.read() & 0xFF);
         }
 
