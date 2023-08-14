@@ -133,6 +133,7 @@ class EngineJob implements EngineRunnable.EngineRunnableManager {
 
     @Override
     public void onResourceReady(final Resource<?> resource) {
+        //resource的类型是Resource<GlideDrawable>
         this.resource = resource;
         MAIN_THREAD_HANDLER.obtainMessage(MSG_COMPLETE, this).sendToTarget();
     }
@@ -199,6 +200,7 @@ class EngineJob implements EngineRunnable.EngineRunnableManager {
             if (MSG_COMPLETE == message.what || MSG_EXCEPTION == message.what) {
                 EngineJob job = (EngineJob) message.obj;
                 if (MSG_COMPLETE == message.what) {
+                    //在onResourceReady()方法中发送出的消息的what是MSG_COMPLETE
                     job.handleResultOnMainThread();
                 } else {
                     job.handleExceptionOnMainThread();

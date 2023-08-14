@@ -55,7 +55,7 @@ class EngineRunnable implements Runnable, Prioritized {
         Exception exception = null;
         Resource<?> resource = null;
         try {
-            //decode()方法处理结果是返回Resource<GlideDrawable>对象
+            //decode()方法处理结果是返回Resource<GlideDrawable>对象，此时resource的类型是Resource<GlideDrawable>
             resource = decode();
         } catch (Exception e) {
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
